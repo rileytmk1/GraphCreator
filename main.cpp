@@ -13,16 +13,18 @@ void rmEdge(string from, string to, int matrix[20][20], string vertices[20], int
 void rmVertex(string label, int matrix[20][20], string vertices[20], int &numVertices);
 void printMatrix(int matrix[20][20], string vertices[20], int &numVertices);
 void dijkstra(string start, string end, int matrix[20][20], string vertices[20], int &numVertices);
+
 int main()
 {
-  int matrix[20][20];
-  string vertices [20];
-  int numVertices = 0;
+  int matrix[20][20]; //adjacency matrix
+  string vertices [20]; //hold vertices
+  int numVertices = 0; // keep track of number of vertices
   for (int i = 0; i < 20; i++){
     for (int j = 0; j < 20; j++){
-      matrix[i][j] = -1;
+      matrix[i][j] = -1; //set everything to -1 (no edges)
     }
   }
+  // process commands
   char input[20];
   while (strcmp(input, "QUIT") != 0){
     cout << "ADD, REMOVE, PRINT, PATH, or QUIT" << endl;
@@ -99,6 +101,7 @@ int main()
 
 }
 
+// finds the index of given vertex in vertices array
 int getVertexIndex(string label, string vertices[20], int &numVertices)
 {
   for(int i = 0; i < numVertices; i++){
@@ -109,11 +112,13 @@ int getVertexIndex(string label, string vertices[20], int &numVertices)
   return -1;
 }
 
+// adds new vertex to vertices array
 void addVertex(string label, string vertices[20], int &numVertices)
 {
   vertices[numVertices++] = label;
 }
 
+// get indexes of each vertex and update adjacency table with the weight
 void addEdge(string from, string to, int matrix[20][20], string vertices[20], int weight, int &numVertices)
 {
   int i = getVertexIndex(from, vertices, numVertices);
@@ -125,6 +130,7 @@ void addEdge(string from, string to, int matrix[20][20], string vertices[20], in
   
 }
 
+// get indexes of each vertex and remove the edge by setting its value to -1
 void rmEdge(string from, string to, int matrix[20][20], string vertices[20], int &numVertices)
 {
   int i = getVertexIndex(from, vertices, numVertices);
@@ -143,13 +149,16 @@ void rmVertex(string label, int matrix[20][20], string vertices[20], int &numVer
     cout << "Vertex doesn't exist." << endl;
     return;
   }
+  // remove all edges connected to this vertex
   for (int i = 0; i < numVertices; i++){
     matrix[i][v] = -1;
     matrix[v][i] = -1;
   }
+  //shift everything left
   for (int i = v; i < numVertices - 1; i++) {
       vertices[i] = vertices[i + 1];
   }
+  // shift columns / rows in adjacency matrix
   for (int i = v; i < numVertices - 1; i++) {
       for (int j = 0; j < 20; j++) {
           matrix[i][j] = matrix[i + 1][j];
@@ -162,19 +171,20 @@ void rmVertex(string label, int matrix[20][20], string vertices[20], int &numVer
 }
 
 void printMatrix(int matrix[20][20], string vertices[20], int &numVertices) {
-    cout << "   ";
-    for (int i = 0; i < numVertices; i++) {
-        cout << vertices[i] << " ";
+  cout << "   ";
+  // print heading for labels
+  for (int i = 0; i < numVertices; i++) {
+    cout << vertices[i] << " ";
+  }
+  cout << endl;
+
+  for (int i = 0; i < numVertices; i++) {
+    cout << vertices[i] << "  ";
+    for (int j = 0; j < numVertices; j++) {
+        cout << matrix[i][j] << " ";
     }
     cout << endl;
-
-    for (int i = 0; i < numVertices; i++) {
-        cout << vertices[i] << "  ";
-        for (int j = 0; j < numVertices; j++) {
-            cout << matrix[i][j] << " ";
-        }
-        cout << endl;
-    }
+  }
 }
 
 
@@ -197,7 +207,7 @@ void dijkstra(string startV, string endV, int matrix[20][20], string vertices[20
   // holds previous vertexes on shortest path.
   int prev[20];
 
-  // set unknow distances to infinity, mark all unvisited 
+  // set unknow distances to infinity (99999), mark all unvisited 
   for (int i = 0; i < 20; i++){
     dist[i] = 99999;
     visited[i] = false;
